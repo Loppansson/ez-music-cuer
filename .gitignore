@@ -3,6 +3,10 @@
 export.cfg
 export_presets.cfg
 
+# Mine
+preview.png
+icon.png
+
 # Imported translations (automatically generated from CSV files)
 *.translation
 
