@@ -1,23 +1,25 @@
-class_name StaticMusicCuer
+class_name MusicCuer
 extends Node
 
 ## Cues music on regular intervals.
 ##
-## Cues a [MusicPlayer] to play the first entry in it's 
-## [code]_music_sources[/code] [Dictionary] on regular intervals. If the 
-## [code]music_player[/code] variable is empty at [method _ready], the 
-## [StaticMusicCuer] assigns it's parent to the [code]music_player[/code] 
-## variable.[br]
+## Cues a [MusicPlayer] to ether play the first entry in it's 
+## [code]_music_sources[/code] [Dictionary], or a an entry with the name 
+## [member track_name] on regular intervals. If the [code]music_player[/code] 
+## variable is empty at [method _ready], the [MusicCuer] assigns it's parent to 
+## the [code]music_player[/code] variable.[br]
 ## [br]
 ## [b]Dependencies:[/b] EZ Sfz and Music, by ghoulbroth (from the AssetLib)
 
 ## The [MusicPlayer] used. If empty at [method _ready], [code]self[/code]'s 
 ## parent is used.
 @export var music_player:  MusicPlayer
-## The time in secounds between [StaticMusicCuer] cues music.
+## If empty, [MusicCuer] cues the first entry in it's [code]_music_sources[/code]
+@export var track_name: String
+## The time in secounds between [MusicCuer] cues music.
 @export var cue_interval := 150 as int
 ## If true, music starts playing after [member start_offset] secounds. If false
-## [StaticMusicCuer] starts only when the [method start] is called.
+## [MusicCuer] starts only when the [method start] is called.
 @export var autostart := true
 ## The time in secounds before music plays for the first time.
 @export var start_offset := 0 as float
@@ -56,7 +58,7 @@ func _set_up_music_player() -> void:
 	if not music_player:
 		assert(
 				get_parent() as MusicPlayer, 
-				"music_player is empty and StaticMusicCuer's parent is not " +
+				"music_player is empty and MusicCuer's parent is not " +
 				"of type MusicPlayer"
 		)
 		music_player = get_parent()
@@ -66,11 +68,19 @@ func _set_up_music_player() -> void:
 	_give_cue()
 
 
-## Plays the song in [code]music_player[/code]'s first music source and starts 
-## the [code]_interval_timer[/code].
+## If [member track_name] is ampty, cues the song in [code]music_player[/code]'s 
+## first music source and starts the [code]_interval_timer[/code].
+## If [member track_name] is not ampty, checks if a track with the name 
+## [member track_name] exists. If it does, [MusicCuer] cues that track.
 func _give_cue():
-	# Plays the music_player's first music source.
-	music_player.play(music_player._music_sources.keys()[0])
+	if track_name:
+		assert(
+				music_player._music_sources.find_key(track_name), 
+				'MusicPlayer has no track of the name "' + track_name + '"'
+		)
+		music_player.play(track_name)
+	else:
+		music_player.play(music_player._music_sources.keys()[0])
 	
 	_interval_timer.start(cue_interval)
 
