@@ -6,6 +6,8 @@ export_presets.cfg
 # Mine
 preview.png
 icon.png
+.gitignore
+.gitattributes
 
 # Imported translations (automatically generated from CSV files)
 *.translation
